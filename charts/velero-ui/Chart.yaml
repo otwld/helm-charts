@@ -1,0 +1,27 @@
+apiVersion: v2
+name: velero-ui
+description: A Helm chart for Velero UI
+type: application
+
+version: 0.3.0
+
+appVersion: "0.2.0"
+
+kubeVersion: "^1.16.0-0"
+
+annotations:
+  artifacthub.io/category: monitoring-logging
+
+
+home: https://velero-ui.docs.otwld.com/
+icon: https://velero.io/img/Velero.svg
+keywords:
+  - backup
+  - velero
+  - dashboard
+sources:
+  - https://github.com/otwld/velero-ui
+  - https://github.com/vmware-tanzu/velero
+maintainers:
+  - name: OTWLD
+    email: tech@otwld.com
