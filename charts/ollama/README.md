@@ -21,10 +21,14 @@ This Community Chart is for deploying [Ollama](https://github.com/ollama/ollama)
 
 To install the `ollama` chart in the `ollama` namespace:
 
+> [!IMPORTANT]  
+> We are migrating the registry from https://otwld.github.io/ollama-helm/ url to OTWLD Helm central registry https://helm.otwld.com/
+> Please update your Helm registry accordingly.
+
 ```console
-helm repo add ollama-helm https://otwld.github.io/ollama-helm/
+helm repo add otwld https://helm.otwld.com/
 helm repo update
-helm install ollama ollama-helm/ollama --namespace ollama --create-namespace
+helm install ollama otwld/ollama --namespace ollama --create-namespace
 ```
 
 ## Upgrading Ollama chart
@@ -37,7 +41,7 @@ Make adjustments to your values as needed, then run `helm upgrade`:
 ```console
 # -- This pulls the latest version of the ollama chart from the repo.
 helm repo update
-helm upgrade ollama ollama-helm/ollama --namespace ollama --values values.yaml
+helm upgrade ollama otwld/ollama --namespace ollama --values values.yaml
 ```
 
 ## Uninstalling Ollama chart
