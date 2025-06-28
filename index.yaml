@@ -4,6 +4,35 @@ entries:
   - annotations:
       artifacthub.io/category: ai-machine-learning
       artifacthub.io/changes: |
+        - kind: added
+          description: add support for setting priorityClassName in Deployment
+    apiVersion: v2
+    appVersion: 0.9.3
+    created: "2025-06-28T11:27:26.52941891Z"
+    description: Get up and running with large language models locally.
+    digest: fa49ce9f660c8758ea1714f08b6a90d8c4cafcae617f947cb5a5d1a1bba6abc3
+    home: https://ollama.ai/
+    icon: https://ollama.ai/public/ollama.png
+    keywords:
+    - ai
+    - llm
+    - llama
+    - mistral
+    kubeVersion: ^1.16.0-0
+    maintainers:
+    - email: contact@otwld.com
+      name: OTWLD
+    name: ollama
+    sources:
+    - https://github.com/ollama/ollama
+    - https://github.com/otwld/ollama-helm
+    type: application
+    urls:
+    - https://github.com/otwld/helm-charts/releases/download/ollama-1.22.0/ollama-1.22.0.tgz
+    version: 1.22.0
+  - annotations:
+      artifacthub.io/category: ai-machine-learning
+      artifacthub.io/changes: |
         - kind: changed
           description: upgrade app version to 0.9.3
           links:
@@ -3727,4 +3756,4 @@ entries:
     urls:
     - https://github.com/otwld/helm-charts/releases/download/velero-ui-0.3.0/velero-ui-0.3.0.tgz
     version: 0.3.0
-generated: "2025-06-27T07:33:05.433966374Z"
+generated: "2025-06-28T11:27:26.529763519Z"
