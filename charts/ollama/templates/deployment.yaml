@@ -49,6 +49,9 @@ spec:
       {{- if .Values.priorityClassName }}
       priorityClassName: {{ .Values.priorityClassName | quote }}
       {{- end }}
+      {{- if .Values.terminationGracePeriodSeconds }}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      {{- end }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       {{- if .Values.runtimeClassName }}
@@ -183,7 +186,7 @@ spec:
                     cat <<EOF > {{ include "ollama.modelsMountPath" $ }}/{{ .name }}
                     {{- .template | nindent 20 }}
                     EOF
-                    /bin/ollama create {{ .name }} -f {{ include "ollama.modelsMountPath" . }}/{{ .name }}
+                    /bin/ollama create {{ .name }} -f {{ include "ollama.modelsMountPath" $ }}/{{ .name }}
                     {{- end }}
                     {{- if .configMapRef }}
                     /bin/ollama create {{ .name }} -f /models/{{ .name }}
