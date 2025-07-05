@@ -4,6 +4,48 @@ entries:
   - annotations:
       artifacthub.io/category: ai-machine-learning
       artifacthub.io/changes: |
+        - kind: fixed
+          description: fix post start hooks when using ollama.create modelfiles and custom directory paths
+          links:
+            - name: PR#181
+              url: https://github.com/otwld/ollama-helm/pull/181
+        - kind: added
+          description: add terminationGracePeriodSeconds
+          links:
+            - name: PR#184
+              url: https://github.com/otwld/ollama-helm/pull/184
+        - kind: changed
+          description: upgrade app version to 0.9.5
+          links:
+            - name: Ollama release v0.9.5
+              url: https://github.com/ollama/ollama/releases/tag/v0.9.5
+    apiVersion: v2
+    appVersion: 0.9.5
+    created: "2025-07-05T04:55:21.179123777Z"
+    description: Get up and running with large language models locally.
+    digest: 9f15d7eb5d2201127fb3c88f5c443491e73ca01d1d58c0122e1aabe520207cb2
+    home: https://ollama.ai/
+    icon: https://ollama.ai/public/ollama.png
+    keywords:
+    - ai
+    - llm
+    - llama
+    - mistral
+    kubeVersion: ^1.16.0-0
+    maintainers:
+    - email: contact@otwld.com
+      name: OTWLD
+    name: ollama
+    sources:
+    - https://github.com/ollama/ollama
+    - https://github.com/otwld/ollama-helm
+    type: application
+    urls:
+    - https://github.com/otwld/helm-charts/releases/download/ollama-1.23.0/ollama-1.23.0.tgz
+    version: 1.23.0
+  - annotations:
+      artifacthub.io/category: ai-machine-learning
+      artifacthub.io/changes: |
         - kind: added
           description: add support for setting priorityClassName in Deployment
     apiVersion: v2
@@ -3756,4 +3798,4 @@ entries:
     urls:
     - https://github.com/otwld/helm-charts/releases/download/velero-ui-0.3.0/velero-ui-0.3.0.tgz
     version: 0.3.0
-generated: "2025-06-28T11:27:26.529763519Z"
+generated: "2025-07-05T04:55:21.179462584Z"
