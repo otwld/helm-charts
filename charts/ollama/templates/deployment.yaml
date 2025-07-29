@@ -93,6 +93,10 @@ spec:
           resources:
             {{- $limits := default dict .Values.resources.limits }}
             {{- if .Values.ollama.gpu.enabled }}
+            {{- if .Values.ollama.gpu.draEnabled}}
+            claims:
+              - name: gpu
+            {{- else }}
           # If gpu is enabled, it can either be a NVIDIA card or a AMD card
               {{- if or (eq .Values.ollama.gpu.type "nvidia") (not .Values.ollama.gpu.type) }}
           # NVIDIA is assumed by default if no value is set and GPU is enabled
@@ -117,6 +121,7 @@ spec:
                 {{- $gpuLimit := dict "amd.com/gpu" (.Values.ollama.gpu.number | default 1) }}
                 {{- $limits = merge $limits $gpuLimit }}
               {{- end }}
+            {{- end }}
             {{- end }}
             {{- $ressources := deepCopy (dict "limits" $limits) | mergeOverwrite .Values.resources }}
             {{- toYaml $ressources | nindent 12 }}
@@ -174,14 +179,24 @@ spec:
                       sleep 5
                     done
 
+                    {{- $allModels := list -}}
+
                     {{- if .Values.ollama.models.pull }}
                     {{- range .Values.ollama.models.pull }}
+
+                    {{- if contains ":" . }}
+                      {{- $allModels = append $allModels . }}
+                    {{- else }}
+                      {{- $allModels = append $allModels (printf "%s:latest" .) }}
+                    {{- end }}
+
                     /bin/ollama pull {{ternary "--insecure" "" $.Values.ollama.insecure | toString }} {{ . }}
                     {{- end }}
                     {{- end }}
 
                     {{- if .Values.ollama.models.create }}
                     {{- range .Values.ollama.models.create }}
+                    {{- $allModels = append $allModels .name }}
                     {{- if .template }}
                     cat <<EOF > {{ include "ollama.modelsMountPath" $ }}/{{ .name }}
                     {{- .template | nindent 20 }}
@@ -196,11 +211,29 @@ spec:
 
                     {{- if .Values.ollama.models.run }}
                     {{- range .Values.ollama.models.run }}
+
+                    {{- if contains ":" . }}
+                      {{- $allModels = append $allModels . }}
+                    {{- else }}
+                      {{- $allModels = append $allModels (printf "%s:latest" .) }}
+                    {{- end }}
+
                     /bin/ollama run {{ . }}
                     {{- end }}
                     {{- end }}
+
+                    {{- if .Values.ollama.models.clean }}
+                    /bin/ollama list | awk 'NR>1 {print $1}' | while read model; do
+                      echo "{{ $allModels | join " " }}" | tr ' ' '\n' | grep -Fqx "$model" || /bin/ollama rm "$model"
+                    done
+                    {{- end }}
           {{- end }}
           {{- end }}
+      {{- if and .Values.ollama.gpu.enabled .Values.ollama.gpu.draEnabled }}
+      resourceClaims:
+        - name: gpu
+          resourceClaimTemplateName: {{ .Values.ollama.gpu.draExistingClaimTemplate |  default (printf "%s" (include "ollama.fullname" .)) }}
+      {{- end }}
       volumes:
         - name: ollama-data
           {{- if .Values.persistentVolume.enabled }}
