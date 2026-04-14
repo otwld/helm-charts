@@ -28,9 +28,9 @@ helm upgrade --install freqtrade otwld/freqtrade \
 
 | Chart | What It Is | Install | Source |
 | --- | --- | --- | --- |
-| `freqtrade` | Freqtrade for Kubernetes, built around a shared dashboard and isolated bot instances | `helm upgrade --install freqtrade otwld/freqtrade -n freqtrade --create-namespace` | [otwld/freqtrade-helm-chart](https://github.com/otwld/freqtrade-helm-chart) |
 | `ollama` | Ollama on Kubernetes, with chart controls for storage, ingress, and runtime configuration | `helm upgrade --install ollama otwld/ollama -n ollama --create-namespace` | [otwld/ollama-helm](https://github.com/otwld/ollama-helm) |
 | `velero-ui` | Velero UI for backup visibility and day-to-day cluster recovery operations | `helm upgrade --install velero-ui otwld/velero-ui -n velero-ui --create-namespace` | [otwld/velero-ui](https://github.com/otwld/velero-ui) |
+| `freqtrade` | Freqtrade for Kubernetes, built around a shared dashboard and isolated bot instances | `helm upgrade --install freqtrade otwld/freqtrade -n freqtrade --create-namespace` | [otwld/freqtrade-helm-chart](https://github.com/otwld/freqtrade-helm-chart) |
 
 ## Registry Model
 
@@ -39,16 +39,6 @@ helm upgrade --install freqtrade otwld/freqtrade \
 - `helm.otwld.com` is the public install endpoint.
 
 ## Charts
-
-### Freqtrade
-
-Designed around:
-- one shared `dashboard`
-- many isolated `bots[]`
-- per-bot config, secret, PVC, service, and optional ingress
-
-Source:
-- [github.com/otwld/freqtrade-helm-chart](https://github.com/otwld/freqtrade-helm-chart)
 
 ### Ollama
 
@@ -63,6 +53,16 @@ Operational UI for Velero environments, packaged as a Helm chart for cluster dep
 
 Source:
 - [github.com/otwld/velero-ui](https://github.com/otwld/velero-ui)
+
+### Freqtrade
+
+Designed around:
+- one shared `dashboard`
+- many isolated `bots[]`
+- per-bot config, secret, PVC, service, and optional ingress
+
+Source:
+- [github.com/otwld/freqtrade-helm-chart](https://github.com/otwld/freqtrade-helm-chart)
 
 ## Common Commands
 
