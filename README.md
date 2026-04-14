@@ -1,6 +1,6 @@
 # OTWLD Helm Charts
 
-![OTWLD logo](./logo.png)
+![OTWLD Helm Charts](./banner.png)
 
 Helm charts for Kubernetes.
 
