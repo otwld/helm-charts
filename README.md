@@ -37,6 +37,7 @@ helm upgrade --install freqtrade otwld/freqtrade \
 - This repository is the **distribution registry** for the charts we publish.
 - Chart source code, examples, CI, and detailed documentation live in the linked source repositories.
 - `helm.otwld.com` is the public install endpoint.
+- The public landing page and Helm index are published from the `gh-pages` branch.
 
 ## Charts
 
