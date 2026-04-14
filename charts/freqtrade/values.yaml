@@ -1,0 +1,381 @@
+# -- Shared defaults applied to the dashboard and every bot unless overridden.
+global:
+  # -- Override `Chart.yaml.name` for generated resource names.
+  nameOverride: ""
+  # -- Override the full release name for generated resource names.
+  fullnameOverride: ""
+
+  # -- Default image settings for dashboard and bot workloads.
+  image:
+    # -- Freqtrade image repository.
+    repository: freqtradeorg/freqtrade
+    # -- Freqtrade image tag.
+    tag: stable
+    # -- Image pull policy for the main container.
+    pullPolicy: IfNotPresent
+    # -- Optional image pull secrets for private registries.
+    pullSecrets: []
+
+  # -- Shared ServiceAccount settings for all workloads in the release.
+  serviceAccount:
+    # -- Create a dedicated ServiceAccount for the release.
+    create: false
+    # -- Use an existing ServiceAccount name. When empty, the chart uses `default` unless `create=true`.
+    name: ""
+    # -- Extra annotations for the shared ServiceAccount.
+    annotations: {}
+    # -- Mount the Kubernetes API token into pods.
+    automountToken: false
+
+  # -- Pod-level security context defaults.
+  podSecurityContext:
+    # -- File system group used for mounted volumes.
+    fsGroup: 1000
+    # -- Change file ownership only when needed.
+    fsGroupChangePolicy: OnRootMismatch
+
+  # -- Container-level security context defaults.
+  containerSecurityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    runAsNonRoot: true
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+    seccompProfile:
+      type: RuntimeDefault
+
+  # -- Default container resources for dashboard and bots.
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits: {}
+
+  # -- Shared pod annotations merged into each dashboard and bot pod.
+  podAnnotations: {}
+  # -- Shared pod labels merged into each dashboard and bot pod.
+  podLabels: {}
+
+  # -- Shared environment variables injected into every main container.
+  env: []
+  # -- Shared envFrom entries injected into every main container.
+  envFrom: []
+  # -- Shared init containers appended after chart-managed init containers.
+  initContainers: []
+  # -- Shared sidecars or extra containers appended after the main Freqtrade container.
+  extraContainers: []
+  # -- Shared extra volumes mounted into dashboard and bot pods.
+  extraVolumes: []
+  # -- Shared extra volumeMounts for the main Freqtrade container.
+  extraVolumeMounts: []
+
+  # -- Shared nodeSelector applied to dashboard and bots.
+  nodeSelector: {}
+  # -- Shared affinity applied to dashboard and bots.
+  affinity: {}
+  # -- Shared tolerations applied to dashboard and bots.
+  tolerations: []
+  # -- Shared topology spread constraints applied to dashboard and bots.
+  topologySpreadConstraints: []
+  # -- Shared PriorityClass for dashboard and bots.
+  priorityClassName: ""
+
+  # -- Default graceful shutdown window in seconds.
+  terminationGracePeriodSeconds: 60
+  # -- Default container lifecycle hooks.
+  lifecycle: {}
+
+  # -- Probe defaults for dashboard and bot StatefulSets.
+  probes:
+    startup:
+      enabled: true
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 30
+    readiness:
+      enabled: true
+      initialDelaySeconds: 5
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 6
+      successThreshold: 1
+    liveness:
+      enabled: true
+      initialDelaySeconds: 30
+      periodSeconds: 15
+      timeoutSeconds: 5
+      failureThreshold: 6
+
+  # -- Shared NetworkPolicy defaults for dashboard and bots.
+  networkPolicy:
+    # -- Enable per-instance NetworkPolicy resources.
+    enabled: false
+    ingress:
+      # -- Additional ingress `from` selectors allowed to reach the API port.
+      from: []
+    egress:
+      # -- Allow DNS egress automatically.
+      allowDns: true
+      # -- Additional egress rules appended after DNS.
+      rules: []
+
+# -- Optional shared FreqUI / `freqtrade webserver` instance used for analysis and graphing.
+dashboard:
+  # -- Enable the shared dashboard StatefulSet.
+  enabled: false
+
+  # -- Override the default image for the dashboard only.
+  image: {}
+  # -- Override the dashboard container command.
+  command: []
+  # -- Override the dashboard container args entirely.
+  args: []
+  # -- Extra args appended to the chart-generated Freqtrade command.
+  extraArgs: []
+
+  api:
+    # -- Expose the dashboard REST API and FreqUI service.
+    enabled: true
+    # -- Dashboard API service port.
+    port: 8080
+    # -- Explicit dashboard CORS origins. Bot API CORS defaults are managed separately.
+    corsOrigins: []
+
+  ui:
+    # -- Enable the dashboard FreqUI surface. Dashboard mode requires this to stay true.
+    enabled: true
+
+  service:
+    # -- Kubernetes Service type for the dashboard API/UI.
+    type: ClusterIP
+    # -- Extra annotations for the dashboard Service.
+    annotations: {}
+
+  ingress:
+    # -- Enable ingress for the dashboard UI/API.
+    enabled: false
+    # -- IngressClass name for the dashboard ingress.
+    className: ""
+    # -- Extra annotations for the dashboard ingress.
+    annotations: {}
+    # -- Dashboard ingress host.
+    host: ""
+    # -- Dashboard ingress path.
+    path: /
+    # -- Dashboard ingress pathType.
+    pathType: Prefix
+    # -- Optional dashboard ingress TLS entries.
+    tls: []
+
+  config:
+    # -- Public Freqtrade config rendered into `config.json`.
+    public: {}
+    # -- Private Freqtrade config rendered into `config-private.json` when no external secret source is used.
+    secret: {}
+    # -- Existing Secret name containing the private config file.
+    existingSecret: ""
+    # -- Key inside `existingSecret` that contains the private config JSON.
+    existingSecretKey: config-private.json
+    # -- External Secrets Operator settings for the private config file.
+    externalSecret:
+      enabled: false
+      refreshInterval: 1h
+      secretStoreRef:
+        name: ""
+        kind: ClusterSecretStore
+      target:
+        name: ""
+        creationPolicy: Owner
+      data: []
+      dataFrom: []
+
+  persistence:
+    # -- Enable persistent storage for the dashboard `user_data` directory.
+    enabled: true
+    # -- Mount path for dashboard `user_data`.
+    mountPath: /freqtrade/user_data
+    # -- Reuse an existing claim instead of creating one.
+    existingClaim: ""
+    # -- PVC access modes.
+    accessModes:
+      - ReadWriteOnce
+    # -- PVC size when the chart creates the claim.
+    size: 20Gi
+    # -- StorageClass for the dashboard PVC. Empty uses the cluster default.
+    storageClassName: ""
+    # -- Extra annotations for the dashboard PVC.
+    annotations: {}
+
+  # -- Optional per-dashboard overrides for global defaults.
+  resources: {}
+  podSecurityContext: {}
+  containerSecurityContext: {}
+  podAnnotations: {}
+  podLabels: {}
+  env: []
+  envFrom: []
+  initContainers: []
+  extraContainers: []
+  extraVolumes: []
+  extraVolumeMounts: []
+  nodeSelector: {}
+  affinity: {}
+  tolerations: []
+  topologySpreadConstraints: []
+  priorityClassName: ""
+  terminationGracePeriodSeconds: null
+  lifecycle: {}
+  probes: {}
+  networkPolicy: {}
+
+  dataJobs:
+    # -- Enable dashboard-owned data jobs such as `download-data`.
+    enabled: false
+    downloadData:
+      # -- Enable the `download-data` companion workload.
+      enabled: false
+      # -- Cron schedule for recurring downloads. Leave empty to render a one-shot Job.
+      schedule: ""
+      # -- Successful CronJob history retained by Kubernetes.
+      successfulJobsHistoryLimit: 1
+      # -- Failed CronJob history retained by Kubernetes.
+      failedJobsHistoryLimit: 1
+      # -- TTL in seconds for completed one-shot Jobs.
+      ttlSecondsAfterFinished: 86400
+      # -- Maximum retries for the Job.
+      backoffLimit: 1
+      # -- Optional Job deadline in seconds.
+      activeDeadlineSeconds: null
+      # -- Number of historical days to download.
+      days: 14
+      # -- Erase existing data before downloading.
+      erase: false
+      # -- Pair list used by the data job. Required when enabled.
+      pairs: []
+      # -- Timeframes fetched by the data job. Required when enabled.
+      timeframes:
+        - 15m
+      # -- Extra CLI args appended to `freqtrade download-data`.
+      extraArgs: []
+      # -- Resources for the data job container.
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits: {}
+
+# -- Independent trading bots rendered as `<release>-bot-<name>`.
+# -- Omitted `enabled` means the bot is rendered.
+# -- Keep one bot per strategy/runtime profile for predictable upgrades and isolation.
+bots: []
+
+# -- Bot reference shape. Copy one block into `bots:` and adjust it for each strategy.
+# bots:
+#   - name: sample
+#     enabled: true
+#     mode: dryRun
+#     strategy:
+#       name: SampleStrategy
+#       source:
+#         # -- `image`, `volume`, or `initSync`
+#         type: image
+#         path: ""
+#         volume:
+#           existingClaim: ""
+#           mountPath: ""
+#           accessModes:
+#             - ReadWriteOnce
+#           size: 5Gi
+#           storageClassName: ""
+#           annotations: {}
+#         initSync:
+#           enabled: false
+#           image:
+#             repository: alpine/git
+#             tag: "2.47.2"
+#             pullPolicy: IfNotPresent
+#             pullSecrets: []
+#           command: []
+#           env: []
+#           envFrom: []
+#     api:
+#       enabled: true
+#       port: 8080
+#       # -- Leave empty to auto-derive from `dashboard.ingress.host` when the dashboard ingress is enabled.
+#       corsOrigins: []
+#     ui:
+#       enabled: false
+#     service:
+#       type: ClusterIP
+#       annotations: {}
+#     ingress:
+#       enabled: false
+#       className: ""
+#       annotations: {}
+#       host: ""
+#       path: /
+#       pathType: Prefix
+#       tls: []
+#     telegram:
+#       enabled: false
+#       token: ""
+#       chatId: ""
+#       topicId: ""
+#       authorizedUsers: []
+#       allowCustomMessages: true
+#       reload: true
+#       balanceDustLevel: 0.01
+#       notificationSettings: {}
+#       keyboard: []
+#     config:
+#       # -- Public config should define at least `exchange.name`, `stake_currency`, `stake_amount`, `timeframe`,
+#       # -- `pairlists`, `entry_pricing`, and `exit_pricing`.
+#       # -- The chart defaults `dry_run` from `mode` and `initial_state` to `running`.
+#       public: {}
+#       # -- Inline private config, or use `existingSecret`, or use `externalSecret`.
+#       secret: {}
+#       existingSecret: ""
+#       existingSecretKey: config-private.json
+#       externalSecret:
+#         enabled: false
+#         refreshInterval: 1h
+#         secretStoreRef:
+#           name: ""
+#           kind: ClusterSecretStore
+#         target:
+#           name: ""
+#           creationPolicy: Owner
+#         data: []
+#         dataFrom: []
+#     persistence:
+#       enabled: true
+#       mountPath: /freqtrade/user_data
+#       existingClaim: ""
+#       accessModes:
+#         - ReadWriteOnce
+#       size: 20Gi
+#       storageClassName: ""
+#       annotations: {}
+#     resources: {}
+#     podSecurityContext: {}
+#     containerSecurityContext: {}
+#     podAnnotations: {}
+#     podLabels: {}
+#     env: []
+#     envFrom: []
+#     initContainers: []
+#     extraContainers: []
+#     extraVolumes: []
+#     extraVolumeMounts: []
+#     nodeSelector: {}
+#     affinity: {}
+#     tolerations: []
+#     topologySpreadConstraints: []
+#     priorityClassName: ""
+#     terminationGracePeriodSeconds: null
+#     lifecycle: {}
+#     probes: {}
+#     networkPolicy: {}

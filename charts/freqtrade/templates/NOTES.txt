@@ -1,0 +1,41 @@
+{{- if .Values.dashboard.enabled }}
+{{- $dashboard := fromYaml (include "freqtrade.normalizeDashboard" (dict "root" . "dashboard" .Values.dashboard)) }}
+Dashboard
+=========
+Service: {{ include "freqtrade.instance.apiServiceName" (dict "root" . "instance" $dashboard) }}
+{{- if $dashboard.ingress.enabled }}
+Ingress: http{{ if $dashboard.ingress.tls }}s{{ end }}://{{ $dashboard.ingress.host }}
+{{- else }}
+Port-forward:
+  kubectl port-forward -n {{ .Release.Namespace }} svc/{{ include "freqtrade.instance.apiServiceName" (dict "root" . "instance" $dashboard) }} 18080:{{ $dashboard.api.port }}
+{{- end }}
+
+{{- if and $dashboard.dataJobs.enabled $dashboard.dataJobs.downloadData.enabled }}
+Dashboard data job: {{ include "freqtrade.dashboard.dataJobName" (dict "root" . "instance" $dashboard "job" $dashboard.dataJobs.downloadData "scheduled" (ne ($dashboard.dataJobs.downloadData.schedule | default "") "")) }}
+{{- end }}
+{{ end }}
+{{- range $bot := (.Values.bots | default list) }}
+{{- if ($bot.enabled | default true) }}
+{{- $instance := fromYaml (include "freqtrade.normalizeBot" (dict "root" $ "bot" $bot)) }}
+
+Bot {{ $instance._name }}
+================
+{{- if $instance.api.enabled }}
+Service: {{ include "freqtrade.instance.apiServiceName" (dict "root" $ "instance" $instance) }}
+{{- else }}
+API: disabled
+{{- end }}
+{{- if $instance.ingress.enabled }}
+Ingress: http{{ if $instance.ingress.tls }}s{{ end }}://{{ $instance.ingress.host }}
+{{- else if $instance.api.enabled }}
+Port-forward:
+  kubectl port-forward -n {{ $.Release.Namespace }} svc/{{ include "freqtrade.instance.apiServiceName" (dict "root" $ "instance" $instance) }} 18080:{{ $instance.api.port }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+Helper script
+=============
+List bot login details and manage local forwards:
+  ./scripts/bot-access.sh list
+  ./scripts/bot-access.sh start

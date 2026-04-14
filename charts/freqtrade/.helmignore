@@ -1,0 +1,9 @@
+.git/
+.github/
+dist/
+docs/
+scripts/
+*.tgz
+*.tar.gz
+.DS_Store
+Thumbs.db

@@ -1,0 +1,6 @@
+{{- range $bot := (.Values.bots | default list) -}}
+  {{- if ($bot.enabled | default true) -}}
+    {{- $instance := fromYaml (include "freqtrade.normalizeBot" (dict "root" $ "bot" $bot)) -}}
+{{ include "freqtrade.instance.renderAll" (dict "root" $ "instance" $instance) }}
+  {{- end -}}
+{{- end -}}

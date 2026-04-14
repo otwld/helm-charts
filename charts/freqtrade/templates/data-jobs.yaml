@@ -1,0 +1,29 @@
+{{- if .Values.dashboard.enabled -}}
+{{- $instance := fromYaml (include "freqtrade.normalizeDashboard" (dict "root" . "dashboard" .Values.dashboard)) -}}
+{{- $job := $instance.dataJobs.downloadData | default dict -}}
+{{- if and $instance.dataJobs.enabled $job.enabled -}}
+{{- $image := mergeOverwrite (deepCopy (.Values.global.image | default dict)) ($instance.image | default dict) -}}
+{{- $schedule := $job.schedule | default "" -}}
+{{- $scheduled := ne $schedule "" -}}
+{{- $spec := include "freqtrade.dashboard.dataJobSpec" (dict "root" . "instance" $instance "job" $job "image" $image) -}}
+{{- $name := include "freqtrade.dashboard.dataJobName" (dict "root" . "instance" $instance "scheduled" $scheduled "spec" $spec) -}}
+---
+apiVersion: batch/v1
+kind: {{ ternary "CronJob" "Job" $scheduled }}
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "freqtrade.commonLabels" (dict "root" . "instance" $instance) | nindent 4 }}
+spec:
+  {{- if $scheduled }}
+  schedule: {{ $schedule | quote }}
+  successfulJobsHistoryLimit: {{ $job.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ $job.failedJobsHistoryLimit }}
+  jobTemplate:
+    spec:
+      {{- $spec | nindent 6 }}
+  {{- else }}
+  {{- $spec | nindent 2 }}
+  {{- end }}
+{{- end -}}
+{{- end -}}

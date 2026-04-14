@@ -1,0 +1,23 @@
+apiVersion: v2
+name: freqtrade
+description: Production-grade Helm chart for running Freqtrade dashboards and multi-bot fleets on Kubernetes
+type: application
+version: 0.3.2
+appVersion: "stable"
+home: https://github.com/otwld/freqtrade-helm-chart
+sources:
+  - https://github.com/otwld/freqtrade-helm-chart
+  - https://github.com/freqtrade/freqtrade
+keywords:
+  - freqtrade
+  - helm-chart
+  - crypto
+  - trading
+  - bot
+  - kubernetes
+  - helm
+  - gitops
+  - frequi
+maintainers:
+  - name: OTWLD
+    url: https://github.com/otwld/freqtrade-helm-chart

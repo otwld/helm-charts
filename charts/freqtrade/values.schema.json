@@ -1,0 +1,412 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "global": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "nameOverride": { "type": "string", "description": "Override the chart name used in generated resource names." },
+        "fullnameOverride": { "type": "string", "description": "Override the fully-qualified release name used in generated resource names." },
+        "image": { "$ref": "#/definitions/image" },
+        "serviceAccount": { "$ref": "#/definitions/serviceAccount" },
+        "podSecurityContext": { "type": "object" },
+        "containerSecurityContext": { "type": "object" },
+        "resources": { "type": "object" },
+        "podAnnotations": { "type": "object" },
+        "podLabels": { "type": "object" },
+        "env": { "type": "array" },
+        "envFrom": { "type": "array" },
+        "initContainers": { "type": "array" },
+        "extraContainers": { "type": "array" },
+        "extraVolumes": { "type": "array" },
+        "extraVolumeMounts": { "type": "array" },
+        "nodeSelector": { "type": "object" },
+        "affinity": { "type": "object" },
+        "tolerations": { "type": "array" },
+        "topologySpreadConstraints": { "type": "array" },
+        "priorityClassName": { "type": "string" },
+        "terminationGracePeriodSeconds": { "type": "integer", "minimum": 0 },
+        "lifecycle": { "type": "object" },
+        "probes": { "$ref": "#/definitions/probes" },
+        "networkPolicy": { "$ref": "#/definitions/networkPolicy" }
+      }
+    },
+    "dashboard": { "$ref": "#/definitions/dashboard" },
+    "bots": {
+      "type": "array",
+      "default": [],
+      "items": { "$ref": "#/definitions/bot" }
+    }
+  },
+  "definitions": {
+    "image": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "repository": { "type": "string" },
+        "tag": { "type": "string" },
+        "pullPolicy": { "type": "string" },
+        "pullSecrets": { "type": "array" }
+      }
+    },
+    "serviceAccount": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "create": { "type": "boolean" },
+        "name": { "type": "string" },
+        "annotations": { "type": "object" },
+        "automountToken": { "type": "boolean" }
+      }
+    },
+    "probes": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "startup": { "type": "object" },
+        "readiness": { "type": "object" },
+        "liveness": { "type": "object" }
+      }
+    },
+    "networkPolicy": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "ingress": { "type": "object" },
+        "egress": { "type": "object" }
+      }
+    },
+    "api": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "port": { "type": "integer", "minimum": 1, "maximum": 65535 },
+        "corsOrigins": {
+          "type": "array",
+          "description": "Allowed browser origins for this API. For bots, leaving this empty defaults CORS to both https://<dashboard ingress host> and http://<dashboard ingress host> when dashboard.ingress.host is configured.",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "ui": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean" }
+      }
+    },
+    "service": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["ClusterIP", "NodePort", "LoadBalancer"]
+        },
+        "annotations": { "type": "object" }
+      }
+    },
+    "ingress": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "className": { "type": "string" },
+        "annotations": { "type": "object" },
+        "host": { "type": "string" },
+        "path": { "type": "string" },
+        "pathType": {
+          "type": "string",
+          "enum": ["ImplementationSpecific", "Exact", "Prefix"]
+        },
+        "tls": { "type": "array" }
+      }
+    },
+    "strategySource": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["image", "volume", "initSync"]
+        },
+        "path": { "type": "string" },
+        "volume": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "existingClaim": { "type": "string" },
+            "mountPath": { "type": "string" },
+            "accessModes": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "size": { "type": "string" },
+            "storageClassName": { "type": "string" },
+            "annotations": { "type": "object" }
+          }
+        },
+        "initSync": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "image": { "$ref": "#/definitions/image" },
+            "command": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "env": { "type": "array" },
+            "envFrom": { "type": "array" }
+          }
+        }
+      }
+    },
+    "config": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "public": { "type": "object" },
+        "secret": { "type": "object" },
+        "existingSecret": { "type": "string" },
+        "existingSecretKey": { "type": "string" },
+        "externalSecret": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "refreshInterval": { "type": "string" },
+            "secretStoreRef": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "name": { "type": "string" },
+                "kind": { "type": "string" }
+              }
+            },
+            "target": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "name": { "type": "string" },
+                "creationPolicy": { "type": "string" }
+              }
+            },
+            "data": { "type": "array" },
+            "dataFrom": { "type": "array" }
+          }
+        }
+      }
+    },
+    "telegram": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable Telegram notifications and commands for this bot."
+        },
+        "token": {
+          "type": "string",
+          "description": "Telegram bot token from BotFather."
+        },
+        "chatId": {
+          "type": "string",
+          "description": "Telegram chat identifier receiving bot notifications."
+        },
+        "topicId": {
+          "type": "string",
+          "description": "Optional Telegram forum topic/thread identifier."
+        },
+        "authorizedUsers": {
+          "type": "array",
+          "description": "Optional list of Telegram usernames authorized to control the bot in group chats.",
+          "items": { "type": "string" }
+        },
+        "allowCustomMessages": {
+          "type": ["boolean", "null"],
+          "description": "Allow strategy-originated Telegram messages."
+        },
+        "reload": {
+          "type": ["boolean", "null"],
+          "description": "Enable reload buttons on Telegram notifications."
+        },
+        "balanceDustLevel": {
+          "type": ["number", "null"],
+          "description": "Hide balances below this threshold from /balance output."
+        },
+        "notificationSettings": {
+          "type": "object",
+          "description": "Pass-through dictionary for official Freqtrade telegram.notification_settings."
+        },
+        "keyboard": {
+          "type": "array",
+          "description": "Optional custom Telegram keyboard layout.",
+          "items": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    },
+    "persistence": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "mountPath": { "type": "string" },
+        "existingClaim": { "type": "string" },
+        "accessModes": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "size": { "type": "string" },
+        "storageClassName": { "type": "string" },
+        "annotations": { "type": "object" }
+      }
+    },
+    "instanceBase": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Render this instance when true. Bots default to enabled when omitted."
+        },
+        "image": { "$ref": "#/definitions/image" },
+        "command": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "args": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "extraArgs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "api": { "$ref": "#/definitions/api" },
+        "ui": { "$ref": "#/definitions/ui" },
+        "service": { "$ref": "#/definitions/service" },
+        "ingress": { "$ref": "#/definitions/ingress" },
+        "config": { "$ref": "#/definitions/config" },
+        "persistence": { "$ref": "#/definitions/persistence" },
+        "podSecurityContext": { "type": "object" },
+        "containerSecurityContext": { "type": "object" },
+        "resources": { "type": "object" },
+        "podAnnotations": { "type": "object" },
+        "podLabels": { "type": "object" },
+        "env": { "type": "array" },
+        "envFrom": { "type": "array" },
+        "initContainers": { "type": "array" },
+        "extraContainers": { "type": "array" },
+        "extraVolumes": { "type": "array" },
+        "extraVolumeMounts": { "type": "array" },
+        "nodeSelector": { "type": "object" },
+        "affinity": { "type": "object" },
+        "tolerations": { "type": "array" },
+        "topologySpreadConstraints": { "type": "array" },
+        "priorityClassName": { "type": "string" },
+        "terminationGracePeriodSeconds": {
+          "type": ["integer", "null"],
+          "minimum": 0
+        },
+        "lifecycle": { "type": "object" },
+        "probes": { "$ref": "#/definitions/probes" },
+        "networkPolicy": { "$ref": "#/definitions/networkPolicy" }
+      }
+    },
+    "dashboard": {
+      "allOf": [
+        { "$ref": "#/definitions/instanceBase" },
+        {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "dataJobs": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "enabled": { "type": "boolean" },
+                "downloadData": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "enabled": { "type": "boolean" },
+                    "schedule": { "type": "string" },
+                    "successfulJobsHistoryLimit": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "failedJobsHistoryLimit": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "ttlSecondsAfterFinished": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "backoffLimit": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "activeDeadlineSeconds": {
+                      "type": ["integer", "null"],
+                      "minimum": 1
+                    },
+                    "days": { "type": "integer", "minimum": 1 },
+                    "erase": { "type": "boolean" },
+                    "pairs": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "timeframes": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "extraArgs": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "resources": { "type": "object" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "bot": {
+      "allOf": [
+        { "$ref": "#/definitions/instanceBase" },
+        {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "name": { "type": "string", "minLength": 1 },
+            "mode": {
+              "type": "string",
+              "enum": ["trade", "dryRun"]
+            },
+            "telegram": { "$ref": "#/definitions/telegram" },
+            "strategy": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "name": { "type": "string" },
+                "source": { "$ref": "#/definitions/strategySource" }
+              }
+            }
+          },
+          "required": ["name"]
+        }
+      ]
+    }
+  }
+}

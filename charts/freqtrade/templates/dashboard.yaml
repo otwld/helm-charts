@@ -1,0 +1,4 @@
+{{- if .Values.dashboard.enabled -}}
+{{- $instance := fromYaml (include "freqtrade.normalizeDashboard" (dict "root" . "dashboard" .Values.dashboard)) -}}
+{{ include "freqtrade.instance.renderAll" (dict "root" . "instance" $instance) }}
+{{- end -}}
