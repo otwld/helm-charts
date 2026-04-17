@@ -8,6 +8,7 @@ Validate one normalized instance.
 {{- $private := $instance.config.secret | default dict -}}
 {{- $exchange := (get $public "exchange") | default dict -}}
 {{- $pairlists := (get $public "pairlists") | default list -}}
+{{- $dbUrl := ((get $public "db_url") | default "") | toString -}}
 {{- $secretApi := (get $private "api_server") | default dict -}}
 {{- $telegram := $instance.telegram | default dict -}}
 {{- if and $instance.config.existingSecret $instance.config.externalSecret.enabled -}}
@@ -99,6 +100,9 @@ Validate one normalized instance.
 {{- end -}}
 {{- if not (get $public "timeframe") -}}
   {{- fail (printf "%s: config.public.timeframe is required" $instance._name) -}}
+{{- end -}}
+{{- if and $dbUrl (hasPrefix "sqlite:///" $dbUrl) (not (hasPrefix "sqlite:////" $dbUrl)) -}}
+  {{- fail (printf "%s: config.public.db_url must use an absolute sqlite path (for example sqlite:///%s/tradesv3.dryrun.sqlite); relative sqlite db_url values are ephemeral inside the container" $instance._name (trimSuffix "/" $instance.persistence.mountPath)) -}}
 {{- end -}}
 {{- if ne $instance._component "dashboard" -}}
   {{- if not (get $public "entry_pricing") -}}

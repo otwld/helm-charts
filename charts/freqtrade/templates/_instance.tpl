@@ -39,6 +39,13 @@ data:
 
 {{- define "freqtrade.instance.secret" -}}
 {{- if and (not .instance.config.existingSecret) (not .instance.config.externalSecret.enabled) (not (empty (.instance.config.secret | default dict))) -}}
+{{- $publicConfig := include "freqtrade.instance.effectivePublicConfig" . | fromYaml -}}
+{{- $privateConfig := deepCopy (.instance.config.secret | default dict) -}}
+{{- $publicApiServer := (get $publicConfig "api_server") | default dict -}}
+{{- $privateApiServer := (get $privateConfig "api_server") | default dict -}}
+{{- if and (not (empty $publicApiServer)) (not (empty $privateApiServer)) -}}
+  {{- $_ := set $privateConfig "api_server" (mergeOverwrite (deepCopy $publicApiServer) $privateApiServer) -}}
+{{- end -}}
 ---
 apiVersion: v1
 kind: Secret
@@ -49,7 +56,7 @@ metadata:
 type: Opaque
 stringData:
   {{ default "config-private.json" .instance.config.existingSecretKey }}: |
-    {{- (.instance.config.secret | default dict) | toPrettyJson | nindent 4 }}
+    {{- $privateConfig | toPrettyJson | nindent 4 }}
 {{- end -}}
 {{- end -}}
 

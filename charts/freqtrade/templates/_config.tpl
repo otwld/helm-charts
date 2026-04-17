@@ -68,6 +68,11 @@ Effective public config with chart-owned defaults injected.
 */}}
 {{- define "freqtrade.instance.effectivePublicConfig" -}}
 {{- $config := deepCopy (.instance.config.public | default dict) -}}
+{{- $mountPath := trimSuffix "/" .instance.persistence.mountPath -}}
+{{- $dbFile := ternary "tradesv3.dryrun.sqlite" "tradesv3.sqlite" (and (eq .instance._component "bot") (eq .instance.mode "dryRun")) -}}
+{{- if not (hasKey $config "db_url") -}}
+  {{- $_ := set $config "db_url" (printf "sqlite:///%s/%s" $mountPath $dbFile) -}}
+{{- end -}}
 {{- if eq .instance._component "bot" -}}
   {{- if not (hasKey $config "dry_run") -}}
     {{- $_ := set $config "dry_run" (eq .instance.mode "dryRun") -}}

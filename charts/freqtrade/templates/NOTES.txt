@@ -11,7 +11,11 @@ Port-forward:
 {{- end }}
 
 {{- if and $dashboard.dataJobs.enabled $dashboard.dataJobs.downloadData.enabled }}
-Dashboard data job: {{ include "freqtrade.dashboard.dataJobName" (dict "root" . "instance" $dashboard "job" $dashboard.dataJobs.downloadData "scheduled" (ne ($dashboard.dataJobs.downloadData.schedule | default "") "")) }}
+{{- $job := $dashboard.dataJobs.downloadData | default dict }}
+{{- $scheduled := ne ($job.schedule | default "") "" }}
+{{- $image := mergeOverwrite (deepCopy (.Values.global.image | default dict)) ($dashboard.image | default dict) }}
+{{- $spec := include "freqtrade.dashboard.dataJobSpec" (dict "root" . "instance" $dashboard "job" $job "image" $image) }}
+Dashboard data job: {{ include "freqtrade.dashboard.dataJobName" (dict "root" . "instance" $dashboard "job" $job "scheduled" $scheduled "spec" $spec) }}
 {{- end }}
 {{ end }}
 {{- range $bot := (.Values.bots | default list) }}
