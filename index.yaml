@@ -62,6 +62,43 @@ entries:
       artifacthub.io/category: ai-machine-learning
       artifacthub.io/changes: |
         - kind: changed
+          description: add schedulerName Support for Pods
+        - kind: changed
+          description: add matrix CI coverage for standard Kubernetes and Knative installs
+        - kind: changed
+          description: make the chart compatible with Knative Serving and enable Helm tests in Knative mode
+        - kind: changed
+          description: move Knative model bootstrap to a non-blocking Job that reruns when Knative model settings change
+        - kind: changed
+          description: add configurable cleanup TTL for completed Knative bootstrap Jobs
+    apiVersion: v2
+    appVersion: 0.21.0
+    created: "2026-04-22T05:51:43.704983943Z"
+    description: Get up and running with large language models locally.
+    digest: 1114ea1e0b12954394df1a8df840ee0bfc6a4def87c4b049b4182c3170074969
+    home: https://ollama.ai/
+    icon: https://ollama.ai/public/ollama.png
+    keywords:
+    - ai
+    - llm
+    - llama
+    - mistral
+    kubeVersion: ^1.16.0-0
+    maintainers:
+    - email: contact@otwld.com
+      name: OTWLD
+    name: ollama
+    sources:
+    - https://github.com/ollama/ollama
+    - https://github.com/otwld/ollama-helm
+    type: application
+    urls:
+    - https://github.com/otwld/helm-charts/releases/download/ollama-1.55.0/ollama-1.55.0.tgz
+    version: 1.55.0
+  - annotations:
+      artifacthub.io/category: ai-machine-learning
+      artifacthub.io/changes: |
+        - kind: changed
           description: add matrix CI coverage for standard Kubernetes and Knative installs
         - kind: changed
           description: make the chart compatible with Knative Serving and enable Helm tests in Knative mode
@@ -4930,4 +4967,4 @@ entries:
     urls:
     - https://github.com/otwld/helm-charts/releases/download/velero-ui-0.3.0/velero-ui-0.3.0.tgz
     version: 0.3.0
-generated: "2026-04-17T06:08:12.623002205Z"
+generated: "2026-04-22T05:51:43.705430997Z"
