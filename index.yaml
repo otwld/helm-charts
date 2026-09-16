@@ -5315,6 +5315,34 @@ entries:
       artifacthub.io/category: monitoring-logging
       artifacthub.io/changes: |
         - kind: changed
+          description: upgrade app version to 0.10.3
+    apiVersion: v2
+    appVersion: 0.10.3
+    created: "2026-09-16T13:09:17.455847422Z"
+    description: A Helm chart for Velero UI
+    digest: be1c5a6b8b474968b782c7c8a8678ba5f9203fbcfd37ae67aef1a3d71732aa06
+    home: https://velero-ui.docs.otwld.com/
+    icon: https://velero.io/img/Velero.svg
+    keywords:
+    - backup
+    - velero
+    - dashboard
+    kubeVersion: ^1.16.0-0
+    maintainers:
+    - email: tech@otwld.com
+      name: OTWLD
+    name: velero-ui
+    sources:
+    - https://github.com/otwld/velero-ui
+    - https://github.com/vmware-tanzu/velero
+    type: application
+    urls:
+    - https://github.com/otwld/helm-charts/releases/download/velero-ui-0.16.0/velero-ui-0.16.0.tgz
+    version: 0.16.0
+  - annotations:
+      artifacthub.io/category: monitoring-logging
+      artifacthub.io/changes: |
+        - kind: changed
           description: upgrade app version to 0.10.2
     apiVersion: v2
     appVersion: 0.10.2
@@ -5836,4 +5864,4 @@ entries:
     urls:
     - https://github.com/otwld/helm-charts/releases/download/velero-ui-0.3.0/velero-ui-0.3.0.tgz
     version: 0.3.0
-generated: "2026-09-13T05:27:02.838982475Z"
+generated: "2026-09-16T13:09:17.456253994Z"
