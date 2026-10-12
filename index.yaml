@@ -5506,6 +5506,42 @@ entries:
   - annotations:
       artifacthub.io/category: monitoring-logging
       artifacthub.io/changes: |
+        - kind: added
+          description: Add a configurable startup probe using /health/startup.
+        - kind: changed
+          description: Use /health/live and /health/ready for liveness and readiness probes.
+        - kind: changed
+          description: Remove the default JWT signing key; upgrades must configure a random secret of at least 32 bytes or an existing Secret.
+        - kind: fixed
+          description: Inject AUTH_SECRET_PASSPHRASE from the configured Secret or explicit value into the application container.
+        - kind: fixed
+          description: Set POLICY_FILE_PATH only when RBAC policies are enabled.
+    apiVersion: v2
+    appVersion: 0.11.0
+    created: "2026-10-12T01:23:39.25825221Z"
+    description: A Helm chart for Velero UI
+    digest: 8c63b31b84094d9f23435b1514f5a9a7b4d63bfa3196c0fba1f988f1534cc6f9
+    home: https://velero-ui.docs.otwld.com/
+    icon: https://velero.io/img/Velero.svg
+    keywords:
+    - backup
+    - velero
+    - dashboard
+    kubeVersion: ^1.16.0-0
+    maintainers:
+    - email: tech@otwld.com
+      name: OTWLD
+    name: velero-ui
+    sources:
+    - https://github.com/otwld/velero-ui
+    - https://github.com/vmware-tanzu/velero
+    type: application
+    urls:
+    - https://github.com/otwld/helm-charts/releases/download/velero-ui-1.0.0/velero-ui-1.0.0.tgz
+    version: 1.0.0
+  - annotations:
+      artifacthub.io/category: monitoring-logging
+      artifacthub.io/changes: |
         - kind: changed
           description: upgrade app version to 0.10.3
     apiVersion: v2
@@ -6056,4 +6092,4 @@ entries:
     urls:
     - https://github.com/otwld/helm-charts/releases/download/velero-ui-0.3.0/velero-ui-0.3.0.tgz
     version: 0.3.0
-generated: "2026-10-09T13:06:22.426816087Z"
+generated: "2026-10-12T01:23:39.258609071Z"
