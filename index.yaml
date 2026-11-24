@@ -61,6 +61,42 @@ entries:
   - annotations:
       artifacthub.io/category: ai-machine-learning
       artifacthub.io/changes: |
+        - kind: fixed
+          description: '`service.ipFamilies` and `service.ipFamilyPolicy` no longer break rendering when `knative.enabled` is true'
+        - kind: fixed
+          description: '`revisionHistoryLimit: 0` is no longer replaced by 10 in the Deployment'
+          links:
+            - name: Kubernetes Deployment revisionHistoryLimit
+              url: https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#clean-up-policy
+        - kind: fixed
+          description: fix models.clean removing untagged models from models.create
+    apiVersion: v2
+    appVersion: 0.40.17
+    created: "2026-11-24T11:16:31.834207603Z"
+    description: Get up and running with large language models locally.
+    digest: 3f87aef757b5634a80bc5141b109f5492b848f43a13da66c71d379be58caf84d
+    home: https://ollama.ai/
+    icon: https://ollama.ai/public/ollama.png
+    keywords:
+    - ai
+    - llm
+    - llama
+    - mistral
+    kubeVersion: ^1.16.0-0
+    maintainers:
+    - email: contact@otwld.com
+      name: OTWLD
+    name: ollama
+    sources:
+    - https://github.com/ollama/ollama
+    - https://github.com/otwld/ollama-helm
+    type: application
+    urls:
+    - https://github.com/otwld/helm-charts/releases/download/ollama-1.96.0/ollama-1.96.0.tgz
+    version: 1.96.0
+  - annotations:
+      artifacthub.io/category: ai-machine-learning
+      artifacthub.io/changes: |
         - kind: changed
           description: upgrade app version to v0.40.14
           links:
@@ -6404,4 +6440,4 @@ entries:
     urls:
     - https://github.com/otwld/helm-charts/releases/download/velero-ui-0.3.0/velero-ui-0.3.0.tgz
     version: 0.3.0
-generated: "2026-11-05T06:57:04.701730002Z"
+generated: "2026-11-24T11:16:31.834515435Z"
